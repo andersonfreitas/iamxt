@@ -44,12 +44,12 @@ def clone(self):
 
 def compact(self, to_remove, lut):
     """
-    This method removes the nodes to_remove of self.node_array and adjust 
+    This method removes the nodes to_remove of self.node_array and adjust
     the pointers in self.node_array and self.node_index. to_remove is a boolean
-    array with 1 for the nodes that need to be removed. 
+    array with 1 for the nodes that need to be removed.
     """
-    self._children_updated = False 
-    self._sb_updated = False 
+    self._children_updated = False
+    self._sb_updated = False
     N = self.node_array.shape[1]
     parent = self.node_array[0,:]
     index_fix = to_remove.astype(np.int32).cumsum()
@@ -58,11 +58,11 @@ def compact(self, to_remove, lut):
 
     if self.node_index.ndim == 3:
         self.lut_node_index_3d_aux(lut,self.node_index)
-    else:    
+    else:
         self.lut_node_index_2d_aux(lut,self.node_index)
-        
+
     nodes_kept = np.nonzero(~to_remove)[0].astype(np.int32)
-    new_node_array = np.empty((self.node_array.shape[0],nodes_kept.size), dtype = np.int32)    
+    new_node_array = np.empty((self.node_array.shape[0],nodes_kept.size), dtype = np.int32)
     self.remove_node_array_lines_aux(nodes_kept,new_node_array,self.node_array)
     self.node_array = new_node_array
     return self
@@ -92,8 +92,8 @@ def getImage(self):
 
 def computeRR(self):
     """
-    Compute the rectangularity ratio (RR) of the max-tree nodes. RR is defined as the 
-    area (volume) of a connected component divided by the area (volume) of its bounding-box. 
+    Compute the rectangularity ratio (RR) of the max-tree nodes. RR is defined as the
+    area (volume) of a connected component divided by the area (volume) of its bounding-box.
     """
     xmin,xmax = self.node_array[6,:], self.node_array[7,:] + 1
     ymin,ymax = self.node_array[9,:], self.node_array[10,:] + 1
@@ -126,10 +126,10 @@ def prune(self, to_prune):
 def contractDR(self, to_keep):
     """
     Direct rule for contracting any max-tree nodes marked as False in 'to_keep'.
-    This is a generic node removal procedure. Note that a node in the max-tree 
+    This is a generic node removal procedure. Note that a node in the max-tree
     can represent many level components.
     """
-        
+
     to_keep[0] = True # The root can never be removed
     N = self.node_array.shape[1]
     lut = np.arange(N, dtype = np.int32)
@@ -138,7 +138,7 @@ def contractDR(self, to_keep):
     self.compact(~to_keep,lut)
     self.node_array[1,:] = 0
     self.update_nchild_aux(self.node_array[0,:],self.node_array[1,:])
-    return self 
+    return self
 
 def getAncestors(self, node):
     """
@@ -168,7 +168,7 @@ def generateGraph(self, keep = [],nodes_attr = [], LR = False,file_name = "graph
     Generates the max-tree graph. You can provide an array containing
     attributes to be displayed in the graph representation.
     """
-    
+
     n_nodes = self.node_array.shape[1]
     h = self.node_array[2,:]
     if keep == []:
@@ -204,12 +204,12 @@ def generateGraph(self, keep = [],nodes_attr = [], LR = False,file_name = "graph
 
     text_file = open(file_name + ".dot", "w")
     text_file.write(dottext)
-    text_file.close()	
+    text_file.close()
     try:
         os.system("/usr/bin/dot -Tpng %s.dot  > %s.png" %(file_name,file_name))
-	os.remove(file_name + ".dot")
+        os.remove(file_name + ".dot")
     except:
-	print("Unable to save graph image. The method will return just the GraphViz code")
+        print("Unable to save graph image. The method will return just the GraphViz code")
         os.remove(file_name + ".dot")
         return dottext
     return
@@ -235,7 +235,7 @@ def getSubBranches(self,sb_index = 0):
     R. Souza, L. Ríttner, R. Machado and R. Lotufo, "Maximal Max-tree Simplification," Proceedings of
     the 22nd International Conference on Pattern Recognition, Stockholm, Sweden, August 2014.
     """
-    
+
     if self._sb_updated == False:
         visited = np.zeros(self.node_array.shape[1], dtype = np.int32)
         self._sb = np.zeros_like(visited)
@@ -254,7 +254,7 @@ def generateCCGraph(self,s = (100,100), parent_scale = True, LR = False,file_nam
     """
     Generates the max-tree graph. Showing the connected components of each node.
     """
-    
+
     n_nodes = self.node_array.shape[1]
     G = gvgen.GvGen()
     parents = self.node_array[0,:]
@@ -273,7 +273,7 @@ def generateCCGraph(self,s = (100,100), parent_scale = True, LR = False,file_nam
         else:
             xpmin,xpmax = self.node_array[6,i],self.node_array[7,i]
             ypmin,ypmax = self.node_array[9,i],self.node_array[10,i]
-	node_image = cv2.resize(node_image,(s[1],s[0]))
+            node_image = cv2.resize(node_image,(s[1],s[0]))
 
         if parent_scale:
             bool_image = np.zeros(s,dtype = bool)
@@ -294,7 +294,7 @@ def generateCCGraph(self,s = (100,100), parent_scale = True, LR = False,file_nam
             cv2.imwrite(path, node_image.transpose(1,2,0))
         else:
             cv2.imwrite(path, cv2.cvtColor(node_image,cv2.COLOR_GRAY2RGB))
-        
+
         G.propertyAppend(items[i],"image", path)
         G.styleApply("node", items[i])
         pindex = parents[i]
@@ -310,7 +310,7 @@ def generateCCGraph(self,s = (100,100), parent_scale = True, LR = False,file_nam
 
     text_file = open(file_name + ".dot", "w")
     text_file.write(dottext)
-    text_file.close()	
+    text_file.close()
     try:
         os.system("/usr/bin/dot -Tpng %s.dot  > %s.png" %(file_name,file_name))
         os.remove(file_name + ".dot")
@@ -330,7 +330,7 @@ def generateCCPathGraph(self,start, end = 0, s = (100,100), parent_scale = True,
     """
     Generates the graph of a max-tree path.
     """
-    
+
 
     G = gvgen.GvGen()
     parents = self.node_array[0,:]
@@ -369,7 +369,7 @@ def generateCCPathGraph(self,start, end = 0, s = (100,100), parent_scale = True,
                 node_image[0][bool_image] = 255
                 node_image[1][bool_image] = 0
                 node_image[2][bool_image] = 0
-	
+
         if node_image.ndim == 3:
             cv2.imwrite(path, node_image.transpose(1,2,0))
         else:
@@ -407,10 +407,10 @@ def generateCCPathGraph(self,start, end = 0, s = (100,100), parent_scale = True,
     dottext = fd.getvalue()
     dottext = dottext.replace("TB","RL")
     dottext = dottext.replace("{","{rankdir=LR")
-   
+
     text_file = open(file_name + ".dot", "w")
     text_file.write(dottext)
-    text_file.close()	
+    text_file.close()
     try:
         os.system("/usr/bin/dot -Tpng %s.dot  > %s.png" %(file_name,file_name))
         os.remove(file_name + ".dot")
@@ -428,17 +428,17 @@ def recConnectedComponent(self,node, bbonly = False):
     """
     This method returns a binary image corresponding to the
     connected component represented by node.
-    bbonly -> Flag that indicates wether return the whole 
+    bbonly -> Flag that indicates wether return the whole
     image or just the connecetd component bounding-box.
     """
     seed = self.node_array[4,node]
     cc = np.zeros(self.node_index.shape, dtype = np.uint8)
-        
+
     if self.node_index.ndim == 2:
        self.rec_connected_component_2d_aux(int(node),int(seed),self.node_index,cc,self.off)
     else:
        self.rec_connected_component_3d_aux(int(node),int(seed),self.node_index,cc,self.off)
-        
+
     if not bbonly:
        return cc.astype(bool)
 
@@ -461,25 +461,25 @@ def computeHistogram(self,img,nbins = 256,wimg = [], normalize = True):
        - img, 2d-array int32. Image used to compute the histograms.
        - wimg, 2d-array int32. Weight image used in the histogram computation.
        - nbins, int. Number of histogram bins. It starts in 0 and ends in nbins - 1.
-       - normalize, bool. Flag indicating whether the histogram should be normalized or not. 
+       - normalize, bool. Flag indicating whether the histogram should be normalized or not.
     Output
        - img, 2d-array float. Histogram array. Each line corresponds to a node histogram.
     """
-    hist = np.zeros((self.node_array.shape[1],nbins), dtype = np.int32)    
+    hist = np.zeros((self.node_array.shape[1],nbins), dtype = np.int32)
     if wimg == []:
         hist[self.node_index,img] += 1
     else:
         hist[self.node_index,img] += wimg
         self.compute_hist_aux(self.node_array[0],hist)
     if normalize:
-        hist = hist*1.0/hist.sum(axis = 1).reshape(-1,1) 
+        hist = hist*1.0/hist.sum(axis = 1).reshape(-1,1)
     return hist.astype(float)
 
 def getBifAncestor(self, node):
     """
     This method returns the first ancestor immediately after a bifurcation of a given node.
     """
-    
+
     return self.get_bif_ancestor_aux(node, self.node_array[0,:],self.node_array[1,:])
 
 def computeNodeGrayAvg(self):
@@ -500,7 +500,7 @@ def computeNodeGrayVar(self,gray_avg = [] ):
     """
     if gray_avg == []:
         gray_avg = self.computeNodeGrayAvg()
-                
+
     gray_var = np.zeros(self.node_array.shape[1], dtype = np.float)
     squared_gray_avg = np.zeros(self.node_array.shape[1], dtype = np.float)
     self.compute_node_gray_var_aux(self.node_array[0,:],self.node_array[2,:],self.node_array[3,:].copy(),squared_gray_avg)
@@ -515,15 +515,15 @@ def computeEccentricity(self):
     This method computes the eccentricity
     of the max-tree nodes.
     """
-        
-    M20 = np.zeros((self.node_array.shape[1]),dtype = np.float)  
-    M02 = np.zeros((self.node_array.shape[1]),dtype = np.float)  
-    M11 = np.zeros((self.node_array.shape[1]),dtype = np.float) 
-        
-        
+
+    M20 = np.zeros((self.node_array.shape[1]),dtype = np.float)
+    M02 = np.zeros((self.node_array.shape[1]),dtype = np.float)
+    M11 = np.zeros((self.node_array.shape[1]),dtype = np.float)
+
+
     par = self.node_array[0,:]
     self.compute_eccentricity_aux(M20,M02,M11,par,self.node_index)
-       
+
     M00 = self.node_array[3,:]
     xc = 1.0*self.node_array[5,:]/M00
     yc = 1.0*self.node_array[8,:]/M00
