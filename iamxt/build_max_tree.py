@@ -4,9 +4,9 @@
 # Copyright (c) 2016, Roberto Souza and collaborators
 # All rights reserved.
 
-from aux import se2off
+from .aux import se2off
 import numpy as np
-import max_tree_c_01
+from . import max_tree_c_01
 
 # Max-tree construction
 def build_max_tree(f, Bc, option = 0):
