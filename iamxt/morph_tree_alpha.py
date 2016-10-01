@@ -68,9 +68,9 @@ class MorphTreeAlpha:
         if option == 'max_tree':
             _,_,self.node_array,self.node_index, = build_max_tree(img,Bc, option = 1)
         elif option == 'tree_of_shapes':
-            print "Error: Option not implemented yet"
+            print("Error: Option not implemented yet")
         else:
-            print "Error: invalid option"
+            print("Error: invalid option")
             return
         self.Bc = Bc
         self.shape = img.shape

@@ -37,7 +37,7 @@ def build_max_tree(f, Bc, option = 0):
         L,M,N = f.shape
         max_tree_c_01.union_find3d_c(L,M,N,off,parent,zpar,S_rev,flat_img)
     else:
-        print "Invalid option"
+        print("Invalid option")
         return
 
     # Tree canocalization

@@ -60,7 +60,7 @@ def computeExtinctionValues(self,attrib_orig, opt = "area"):
                                   (nlevels[composite_nodes] - 1)\
                                   *area[composite_nodes]
     else:
-        print "Invalid Option"
+        print("Invalid Option")
         return
 
     ichmax = np.zeros_like(parent)
@@ -118,7 +118,7 @@ def draw1DImageTree(self, tree = 'mt'):
   composite_nodes = []
   self.getSubBranches(0)      
          
-  for i in xrange(self._cum_sb_hist.size-1, 0,-1):
+  for i in range(self._cum_sb_hist.size-1, 0,-1):
     sb =  self._sb[self._cum_sb_hist[i-1]:self._cum_sb_hist[i]]
     for j in sb:
       h = H[j]
@@ -137,7 +137,7 @@ def draw1DImageTree(self, tree = 'mt'):
                
       if hp != (h-1):    
         composite_nodes.append([h-hmin,ys])       
-        for k in xrange(hp+1,h):
+        for k in range(hp+1,h):
           tree_image[k - hmin,ymin:ymax+1] = LC[ymin:ymax+1]*k*35.0
           if tree == 'ct':
             nodes_image[k-hmin,ys] = 2  
@@ -165,7 +165,7 @@ def draw1DImageTree(self, tree = 'mt'):
     bool_img = tree_image != 255
     bool_img2 = bool_img.copy()
     bool_img2[::2,:] = 0
-    for kk in xrange(nglevels-1):
+    for kk in range(nglevels-1):
       bool_img[kk*pixels_size:(kk+1)*pixels_size,:] = bool_img[kk*pixels_size:(kk+1)*pixels_size,:] - \
                                                      bool_img2[(kk+1)*pixels_size:(kk+2)*pixels_size,:]  
       tree_image[~bool_img] = 255 

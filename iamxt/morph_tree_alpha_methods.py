@@ -18,7 +18,7 @@ except:
     warnings.warn("gvgen not installed, this may cause a problem in drawing functions")
 
 try:
-    import StringIO
+    import io
 except:
     warnings.warn("StringIO not installed, this may cause a problem in drawing functions")
 
@@ -184,7 +184,7 @@ def generateGraph(self, keep = [],nodes_attr = [], LR = False,file_name = "graph
     items = {}
 
 
-    for i in xrange(n_nodes):
+    for i in range(n_nodes):
         if keep[i]:
             items[i] = G.newItem('%d: %d [%d]' %(i,h[i],nodes_attr[i]))
             G.styleApply("keep", items[i])
@@ -194,7 +194,7 @@ def generateGraph(self, keep = [],nodes_attr = [], LR = False,file_name = "graph
         pindex = self.node_array[0,i]
         if pindex != i:
             G.newLink(items[i], items[pindex])
-    fd = StringIO.StringIO()
+    fd = io.StringIO()
     G.dot(fd)
     dottext = fd.getvalue()
 
@@ -209,7 +209,7 @@ def generateGraph(self, keep = [],nodes_attr = [], LR = False,file_name = "graph
         os.system("/usr/bin/dot -Tpng %s.dot  > %s.png" %(file_name,file_name))
 	os.remove(file_name + ".dot")
     except:
-	print "Unable to save graph image. The method will return just the GraphViz code"
+	print("Unable to save graph image. The method will return just the GraphViz code")
         os.remove(file_name + ".dot")
         return dottext
     return
@@ -263,7 +263,7 @@ def generateCCGraph(self,s = (100,100), parent_scale = True, LR = False,file_nam
     items = {}
     items[0] = G.newItem(str(0))
     G.styleApply("node", items[0])
-    for i in xrange(1,n_nodes):
+    for i in range(1,n_nodes):
         items[i] = G.newItem("")
         path = 'node___' + str(i) + '.png'
 
@@ -301,7 +301,7 @@ def generateCCGraph(self,s = (100,100), parent_scale = True, LR = False,file_nam
         if pindex != i:
             G.newLink(items[i], items[pindex])
 
-    fd = StringIO.StringIO()
+    fd = io.StringIO()
     G.dot(fd)
     dottext = fd.getvalue()
     if LR:
@@ -319,7 +319,7 @@ def generateCCGraph(self,s = (100,100), parent_scale = True, LR = False,file_nam
             if f.startswith("node___"):
                 os.remove(f)
     except:
-        print "Unable to save graph image. The method will return just the GraphViz code. Lots of temporary files were generated in your current folder."
+        print("Unable to save graph image. The method will return just the GraphViz code. Lots of temporary files were generated in your current folder.")
         os.remove(file_name + ".dot")
         return dottext
     return
@@ -384,7 +384,7 @@ def generateCCPathGraph(self,start, end = 0, s = (100,100), parent_scale = True,
             G.styleApply("node", items[j])
             G.newLink(items[pos], items[j])
             j += 1
-            for i in xrange(nlevels[pos] - 2):
+            for i in range(nlevels[pos] - 2):
                 items[j] = G.newItem("")
                 G.propertyAppend(items[j],"image", path)
                 G.styleApply("node", items[j])
@@ -402,7 +402,7 @@ def generateCCPathGraph(self,start, end = 0, s = (100,100), parent_scale = True,
             G.newLink(items[pos], items[pindex])
         pos = pindex
 
-    fd = StringIO.StringIO()
+    fd = io.StringIO()
     G.dot(fd)
     dottext = fd.getvalue()
     dottext = dottext.replace("TB","RL")
@@ -419,7 +419,7 @@ def generateCCPathGraph(self,start, end = 0, s = (100,100), parent_scale = True,
             if f.startswith("node___"):
                 os.remove(f)
     except:
-        print "Unable to save graph image. The method will return just the GraphViz code. Lots of temporary files were generated in your current folder."
+        print("Unable to save graph image. The method will return just the GraphViz code. Lots of temporary files were generated in your current folder.")
         os.remove(file_name + ".dot")
         return dottext
     return

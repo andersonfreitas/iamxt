@@ -13,7 +13,7 @@ except:
     warnings.warn("gvgen not installed, this may cause a problem in drawing functions")
 
 try:
-    import StringIO
+    import io
 except:
     warnings.warn("StringIO not installed, this may cause a problem in drawing functions")
 
@@ -104,12 +104,12 @@ def generateGraph(par,img):
        p = i
        while(p != par[p]):
 
-           if not p in items.keys():
+           if not p in list(items.keys()):
                items[p] = G.newItem('%d:%f' % (p,f[p]))
                if par[p] == p or f[p] != f[par[p]]:
                    G.styleApply("levroot", items[p])
 
-           if not par[p] in items.keys():
+           if not par[p] in list(items.keys()):
                q = par[p]
                items[q] = G.newItem('%d:%f' % (q,f[q]))
                if par[q] == q or f[q] != f[par[q]]:
@@ -121,7 +121,7 @@ def generateGraph(par,img):
        G.newLink(items[p], items[par[p]])
 
    
-   fd = StringIO.StringIO()
+   fd = io.StringIO()
    G.dot(fd)
    dottext = fd.getvalue()
    return dottext
