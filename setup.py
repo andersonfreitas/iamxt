@@ -13,7 +13,8 @@ import os
 
 (opt,) = sysconfig.get_config_vars('OPT')
 os.environ['OPT'] = " ".join(flag for flag in opt.split() if flag != '-Wstrict-prototypes')
-
+os.environ["CC"] = "icc"
+os.environ["CXX"] = "icpc"
 
 
 
